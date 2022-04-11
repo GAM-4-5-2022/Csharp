@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using static System.Random;
+using System.Text;
+
 namespace HangmanAppTest
 {
     internal class Program
@@ -61,7 +66,7 @@ namespace HangmanAppTest
                 Console.WriteLine("    ===");
             }
         }
-        
+
         private static int printWord(List<char> guessedLetters, String randomWord)
         {
             int counter = 0;
@@ -92,6 +97,77 @@ namespace HangmanAppTest
                 Console.OutputEncoding = System.Text.Encoding.Unicode;
                 Console.Write("\u0305 ");
             }
+        }
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Dobrodošli u Vješalo :)");
+            Console.WriteLine("-----------------------------------------");
+
+            Random random = new Random();
+            List<string> wordDictionary = new List<string> { "sunflower", "house", "diamond", "memes", "yeet", "hello", "howdy", "like", "subscribe" };
+            int index = random.Next(wordDictionary.Count);
+            String randomWord = wordDictionary[index];
+
+            foreach (char x in randomWord)
+            {
+                Console.Write("_ ");
+            }
+
+            int lengthOfWordToGuess = randomWord.Length;
+            int amountOfTimesWrong = 0;
+            List<char> currentLettersGuessed = new List<char>();
+            int currentLettersRight = 0;
+
+            while (amountOfTimesWrong != 6 && currentLettersRight != lengthOfWordToGuess)
+            {
+                Console.Write("\nIskorištena slova: ");
+                foreach (char letter in currentLettersGuessed)
+                {
+                    Console.Write(letter + " ");
+                }
+                // Prompt user for input
+                Console.Write("\nPogodi slovo: ");
+                char letterGuessed = Console.ReadLine()[0];
+                // Check if that letter has already been guessed
+                if (currentLettersGuessed.Contains(letterGuessed))
+                {
+                    Console.Write("\r\n Već ste iskoristili ovo slovo!");
+                    printHangman(amountOfTimesWrong);
+                    currentLettersRight = printWord(currentLettersGuessed, randomWord);
+                    printLines(randomWord);
+                }
+                else
+                {
+                    // Check if letter is in randomWord
+                    bool right = false;
+                    for (int i = 0; i < randomWord.Length; i++) { if (letterGuessed == randomWord[i]) { right = true; } }
+
+                    // User is right
+                    if (right)
+                    {
+                        printHangman(amountOfTimesWrong);
+                        // Print word
+                        currentLettersGuessed.Add(letterGuessed);
+                        currentLettersRight = printWord(currentLettersGuessed, randomWord);
+                        Console.Write("\r\n");
+                        printLines(randomWord);
+                    }
+                    // User was wrong af
+                    else
+                    {
+                        amountOfTimesWrong += 1;
+                        currentLettersGuessed.Add(letterGuessed);
+                        // Update the drawing
+                        printHangman(amountOfTimesWrong);
+                        // Print word
+                        currentLettersRight = printWord(currentLettersGuessed, randomWord);
+                        Console.Write("\r\n");
+                        printLines(randomWord);
+                    }
+                }
+            }
+            Console.WriteLine("\r\nIgra je gotova. Hvala na igranju! :)");
         }
     }
 }
